@@ -17,3 +17,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//All version 1 routes
+Route::prefix('v1')->group(function () {
+    
+    //all product v1 routes
+    Route::prefix('product')->group(function () {
+        Route::post('store', 'Api\v1\ProductController@store');
+    });
+});
