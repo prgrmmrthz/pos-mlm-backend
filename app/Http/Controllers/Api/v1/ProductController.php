@@ -184,6 +184,33 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if($product = Product::find($id)){
+            //delete the data
+            $product->delete();
+
+             //return sucess response
+             return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_OK,
+                    'message' => 'Product has been deleted!'
+                ],
+                JsonResponse::HTTP_OK
+            );
+
+        }else{
+            //return validator errors
+            return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_NOT_FOUND,
+                    'message' => 'Product not found!'
+                ],
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }//if else
+    }
+
+    public function showDeleted()
+    {
+        return Product::onlyTrashed()->get();
     }
 }

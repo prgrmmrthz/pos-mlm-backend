@@ -27,5 +27,8 @@ Route::prefix('v1')->group(function () {
         Route::get('show/{id}', 'Api\v1\ProductController@show');
         Route::get('index', 'Api\v1\ProductController@index');
         Route::put('update/{id}', 'Api\v1\ProductController@update');
+        Route::delete('destroy/{id}', 'Api\v1\ProductController@destroy');
+        
+        Route::get('showDeleted', 'Api\v1\ProductController@showDeleted');
     });
 });
