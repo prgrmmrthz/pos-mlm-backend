@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Product;
 use App\Http\Resources\Api\v1\ProductResource;
+use App\Http\Requests\Api\v1\StoreProduct;
 
 class ProductController extends Controller
 {
@@ -48,7 +49,7 @@ class ProductController extends Controller
             ->paginate($validated_data['items_per_page']);
 
         return ProductResource::collection($products);
-    }
+    }//index
 
     /**
      * Store a newly created resource in storage.
@@ -56,28 +57,9 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {      
-        //dd($request); for debugging request
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:products,name',
-            'regular_price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'is_for_sale' => 'required|boolean',
-            'available_stock' => 'required|integer'
-        ]);
-
-        if ($validator->fails()){
-            return response()->json(
-                [
-                    'status_code' => JsonResponse::HTTP_NOT_ACCEPTABLE,
-                    'message' => $validator->errors()
-                ],
-                JsonResponse::HTTP_NOT_ACCEPTABLE
-            );
-        }
-        
-        if($validator->validated() ){
-            Product::create($validator->validated());
+    public function store(StoreProduct $request)
+    {          
+            Product::create($request->validated());
 
             return response()->json(
                 [
@@ -86,8 +68,7 @@ class ProductController extends Controller
                 ],
                 JsonResponse::HTTP_OK
             );
-        }
-    }
+    }//store
 
     /**
      * Display the specified resource.
