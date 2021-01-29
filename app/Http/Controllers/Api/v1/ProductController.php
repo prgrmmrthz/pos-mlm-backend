@@ -76,15 +76,9 @@ class ProductController extends Controller
             );
         }
         
-        if( $validated_data = $validator->validated() ){
-            $product = new Product;
-            $product->name = $validated_data['name'];
-            $product->regular_price = (float) $validated_data['regular_price'];
-            $product->is_for_sale = (boolean) $validated_data['is_for_sale'];
-            $product->available_stock = (integer) $validated_data['available_stock'];
+        if($validator->validated() ){
+            Product::create($validator->validated());
 
-            # save
-            $product->save(); 
             return response()->json(
                 [
                     'status_code' => JsonResponse::HTTP_OK,
