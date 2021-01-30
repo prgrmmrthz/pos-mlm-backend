@@ -9,9 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Requests\Api\v1\SalesProduct;
 use App\Http\Requests\Api\v1\StoreSales;
-
 use App\Sales;
 
 class SalesController extends Controller

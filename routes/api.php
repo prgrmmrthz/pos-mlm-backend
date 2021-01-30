@@ -36,4 +36,9 @@ Route::prefix('v1')->group(function () {
     Route::prefix('sales')->group(function () {
         Route::post('store', 'Api\v1\SalesController@store');
     });
+
+    //Cart v1 routes
+    Route::prefix('cart')->group(function () {
+        Route::post('store', 'Api\v1\CartController@store');
+    });
 });
