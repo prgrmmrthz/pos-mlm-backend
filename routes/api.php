@@ -31,4 +31,9 @@ Route::prefix('v1')->group(function () {
         
         Route::get ('showDeleted', 'Api\v1\ProductController@showDeleted');
     });
+
+    //Sales v1 routes
+    Route::prefix('sales')->group(function () {
+        Route::post('store', 'Api\v1\SalesController@store');
+    });
 });

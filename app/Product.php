@@ -10,9 +10,15 @@ class Product extends Model
     use SoftDeletes;
     //protected $guarded = ['id']; 
     protected $fillable = [
-        'name',
-        'regular_price',
-        'is_for_sale',
-        'available_stock'
+                'name',
+                'is_for_sale',
+                'available_stock',
+                'class_id',
+                'flooring',
+                'ceiling',
+                'unit_price',
+                'retail_price',
+                'wholesale_price',
+                'supplier_id',
     ];
 }

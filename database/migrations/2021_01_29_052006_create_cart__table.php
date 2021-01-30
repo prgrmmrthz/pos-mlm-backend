@@ -21,7 +21,7 @@ class CreateCartTable extends Migration
             $table->float('price', 8,2)->default(0);
             $table->unsignedInteger('quantity');
             $table->float('subtotal', 10,2)->default(0);
-            $table->unsignedTinyInteger('status');
+            $table->unsignedTinyInteger('status')->default(0);
             $table->unsignedSmallInteger('user');
         });
     }

@@ -20,8 +20,8 @@ class CreateSalesTable extends Migration
             $table->float('subtotal', 18,2)->default(0);
             $table->float('less', 18,2)->default(0);
             $table->float('total', 18,2)->default(0);
-            $table->string('mode', 100);
-            $table->unsignedSmallInteger('user');
+            $table->unsignedTinyInteger('mode')->default(1);
+            $table->unsignedSmallInteger('user')->default(0);
         });
     }
 
