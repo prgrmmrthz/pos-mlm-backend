@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Resources\Api\v1\CartResource;
 use App\Http\Requests\Api\v1\StoreCart;
 use App\Cart;
 
@@ -20,9 +21,37 @@ class CartController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'sales_id' => 'required|integer',
+            'order_by' => [
+                'required',
+                Rule::in(['asc','desc'])
+            ],
+            'items_per_page' => 'required|integer',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_NOT_ACCEPTABLE,
+                    'message' => $validator->errors()
+                ],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
+
+        $validated_data = $validator->validated();
+
+         $data = DB::table('carts')
+            ->leftjoin('products','products.id', '=', 'product_id')
+            ->select('carts.*', 'products.name as product_name')
+            ->where('sales_id', '=', $validated_data['sales_id'])
+            ->orderBy('name', $validated_data['order_by'])
+            ->paginate($validated_data['items_per_page']);
+
+        return CartResource::collection($data);
     }
 
     /**
