@@ -68,7 +68,7 @@ class CartController extends Controller
             ->get();   */ 
 
         //pordernumber int,pproduct int,pprice decimal(10,2),pqty int,ptotal decimal(10,2)
-        return DB::select(
+        $data = DB::select(
             'call addProductToOrder(?,?,?,?,?)',
             array(
                 $request['sales_id'],
@@ -77,6 +77,15 @@ class CartController extends Controller
                 $request['quantity'],
                 $request['subtotal']
             )
+        );
+
+        return response()->json(
+            [
+                'status_code' => JsonResponse::HTTP_OK,
+                'message' => 'Added to Cart',
+                'data'=>$data
+            ],
+            JsonResponse::HTTP_OK
         );
 
         /* $data = Cart::create($request->validated());
