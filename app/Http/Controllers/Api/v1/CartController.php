@@ -62,7 +62,24 @@ class CartController extends Controller
      */
     public function store(StoreCart $request)
     {
-        $data = Cart::create($request->validated());
+        /* return DB::table('carts')
+            ->where('sales_id', '=', $request['sales_id'])
+            ->where('product_id', '=', $request['product_id'])
+            ->get();   */ 
+
+        //pordernumber int,pproduct int,pprice decimal(10,2),pqty int,ptotal decimal(10,2)
+        return DB::select(
+            'call addProductToOrder(?,?,?,?,?)',
+            array(
+                $request['sales_id'],
+                $request['product_id'],
+                $request['price'],
+                $request['quantity'],
+                $request['subtotal']
+            )
+        );
+
+        /* $data = Cart::create($request->validated());
         return response()->json(
             [
                 'status_code' => JsonResponse::HTTP_OK,
@@ -70,7 +87,7 @@ class CartController extends Controller
                 'data'=>$data
             ],
             JsonResponse::HTTP_OK
-        );
+        ); */
     }
 
     /**
