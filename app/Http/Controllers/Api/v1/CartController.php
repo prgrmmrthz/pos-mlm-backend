@@ -23,35 +23,7 @@ class CartController extends Controller
      */
     public function index(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'sales_id' => 'required|integer',
-            'order_by' => [
-                'required',
-                Rule::in(['asc','desc'])
-            ],
-            'items_per_page' => 'required|integer',
-        ]);
-
-        if ($validator->fails()){
-            return response()->json(
-                [
-                    'status_code' => JsonResponse::HTTP_NOT_ACCEPTABLE,
-                    'message' => $validator->errors()
-                ],
-                JsonResponse::HTTP_NOT_ACCEPTABLE
-            );
-        }
-
-        $validated_data = $validator->validated();
-
-         $data = DB::table('carts')
-            ->leftjoin('products','products.id', '=', 'product_id')
-            ->select('carts.*', 'products.name as product_name')
-            ->where('sales_id', '=', $validated_data['sales_id'])
-            ->orderBy('name', $validated_data['order_by'])
-            ->paginate($validated_data['items_per_page']);
-
-        return CartResource::collection($data);
+       
     }
 
     /**
@@ -105,9 +77,37 @@ class CartController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'sales_id' => 'required|integer',
+            'order_by' => [
+                'required',
+                Rule::in(['asc','desc'])
+            ],
+            'items_per_page' => 'required|integer',
+        ]);
+
+        if ($validator->fails()){
+            return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_NOT_ACCEPTABLE,
+                    'message' => $validator->errors()
+                ],
+                JsonResponse::HTTP_NOT_ACCEPTABLE
+            );
+        }
+
+        $validated_data = $validator->validated();
+
+         $data = DB::table('carts')
+            ->leftjoin('products','products.id', '=', 'product_id')
+            ->select('carts.*', 'products.name as product_name')
+            ->where('sales_id', '=', $validated_data['sales_id'])
+            ->orderBy('name', $validated_data['order_by'])
+            ->paginate($validated_data['items_per_page']);
+
+        return CartResource::collection($data);
     }
 
     /**
@@ -119,7 +119,51 @@ class CartController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if($cart = Cart::find($id)){
+            $validator = Validator::make($request->all(), [
+                'price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+                'quantity' => 'required|integer',
+                'subtotal' => 'required|regex:/^\d+(\.\d{1,2})?$/'
+            ]);//validator
+
+            if ($validator->fails()){
+                return response()->json(
+                    [
+                        'status_code' => JsonResponse::HTTP_NOT_ACCEPTABLE,
+                        'message' => $validator->errors()
+                    ],
+                    JsonResponse::HTTP_NOT_ACCEPTABLE
+                );
+            }
+    
+            if($validated_data = $validator->validate()){
+                $cart->price = $validated_data['price'] ?? $product->price;
+                $cart->quantity = $validated_data['quantity'] ?? $product->quantity;
+                $cart->subtotal = $validated_data['subtotal'] ?? $product->subtotal;
+            }
+
+            //save the data
+            $cart->save();
+
+             //return sucess response
+             return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_OK,
+                    'message' => 'Cart has been updated!'
+                ],
+                JsonResponse::HTTP_OK
+            );
+        }else{
+             //return validator errors
+             return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_NOT_FOUND,
+                    'message' => 'Cart not found!'
+                ],
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+        //if else cart
     }
 
     /**
@@ -130,6 +174,28 @@ class CartController extends Controller
      */
     public function destroy($id)
     {
-        //
+        if($cart = Cart::find($id)){
+            //delete the data
+            $cart->delete();
+
+             //return sucess response
+             return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_OK,
+                    'message' => 'Cart has been deleted!'
+                ],
+                JsonResponse::HTTP_OK
+            );
+
+        }else{
+            //return validator errors
+            return response()->json(
+                [
+                    'status_code' => JsonResponse::HTTP_NOT_FOUND,
+                    'message' => 'Cart not found!'
+                ],
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }//if else
     }
 }

@@ -40,6 +40,8 @@ Route::prefix('v1')->group(function () {
     //Cart v1 routes
     Route::prefix('cart')->group(function () {
         Route::post('store', 'Api\v1\CartController@store');
-        Route::get('index', 'Api\v1\CartController@index');
+        Route::get('show', 'Api\v1\CartController@show');
+        Route::put('update/{id}', 'Api\v1\CartController@update');
+        Route::delete('destroy/{id}', 'Api\v1\CartController@destroy');
     });
 });
