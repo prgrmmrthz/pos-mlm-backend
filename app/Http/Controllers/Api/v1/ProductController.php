@@ -23,7 +23,6 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name_search' => 'string',
             'name_order' => [
                 'required',
                 Rule::in(['asc','desc'])
@@ -44,7 +43,6 @@ class ProductController extends Controller
         $validated_data = $validator->validated();
 
         $products = DB::table('products')
-            ->where('name', 'like', '%'.$validated_data['name_search'].'%')
             ->orderBy('name', $validated_data['name_order'])
             ->paginate($validated_data['items_per_page']);
 
@@ -59,12 +57,13 @@ class ProductController extends Controller
      */
     public function store(StoreProduct $request)
     {          
-            Product::create($request->validated());
+            $product = Product::create($request->validated());
 
             return response()->json(
                 [
                     'status_code' => JsonResponse::HTTP_OK,
-                    'message' => 'Product has been Saved!'
+                    'message' => 'Product has been Saved!',
+                    'data' => $product
                 ],
                 JsonResponse::HTTP_OK
             );
